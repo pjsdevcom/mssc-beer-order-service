@@ -1,7 +1,7 @@
 package com.pjsdev.msscbeerorderservice.services;
 
+import com.pjsdev.msscbeerorderservice.bootstrap.BeerOrderBootstrap;
 import com.pjsdev.msscbeerorderservice.domain.Customer;
-import com.pjsdev.msscbeerorderservice.repositories.BeerOrderRepository;
 import com.pjsdev.msscbeerorderservice.repositories.CustomerRepository;
 import com.pjsdev.msscbeerorderservice.web.model.BeerOrderDto;
 import com.pjsdev.msscbeerorderservice.web.model.BeerOrderLineDto;
@@ -21,27 +21,25 @@ public class TestingRoomService {
 
     private final CustomerRepository customerRepository;
     private final BeerOrderService beerOrderService;
-    private final BeerOrderRepository beerOrderRepository;
     private final List<String> beerUpcs = new ArrayList<>(3);
 
-    public TastingRoomService(CustomerRepository customerRepository, BeerOrderService beerOrderService,
-                              BeerOrderRepository beerOrderRepository) {
+    public TestingRoomService(CustomerRepository customerRepository, BeerOrderService beerOrderService) {
+
         this.customerRepository = customerRepository;
         this.beerOrderService = beerOrderService;
-        this.beerOrderRepository = beerOrderRepository;
 
-        beerUpcs.add(BeerOrderBootStrap.BEER_1_UPC);
-        beerUpcs.add(BeerOrderBootStrap.BEER_2_UPC);
-        beerUpcs.add(BeerOrderBootStrap.BEER_3_UPC);
+        beerUpcs.add(BeerOrderBootstrap.BEER_1_UPC);
+        beerUpcs.add(BeerOrderBootstrap.BEER_2_UPC);
+        beerUpcs.add(BeerOrderBootstrap.BEER_3_UPC);
     }
 
     @Transactional
     @Scheduled(fixedRate = 2000) //run every 2 seconds
     public void placeTastingRoomOrder(){
 
-        List<Customer> customerList = customerRepository.findAllByCustomerNameLike(BeerOrderBootStrap.TASTING_ROOM);
+        List<Customer> customerList = customerRepository.findAllByCustomerNameLike(BeerOrderBootstrap.TASTING_ROOM);
 
-        if (customerList.size() == 1){ //should be just one
+        if (customerList.size() == 1) { //should be just one
             doPlaceOrder(customerList.get(0));
         } else {
             log.error("Too many or too few tasting room customers found");
@@ -53,7 +51,7 @@ public class TestingRoomService {
 
         BeerOrderLineDto beerOrderLine = BeerOrderLineDto.builder()
                 .upc(beerToOrder)
-                .orderQuantity(new Random().nextInt(6)) //todo externalize value to property
+                .orderQuantity(new Random().nextInt(6)) //TODO: externalize value to property
                 .build();
 
         List<BeerOrderLineDto> beerOrderLineSet = new ArrayList<>();
