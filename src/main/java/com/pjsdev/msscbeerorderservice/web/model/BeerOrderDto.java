@@ -1,6 +1,5 @@
 package com.pjsdev.msscbeerorderservice.web.model;
 
-import com.pjsdev.msscbeerorderservice.domain.OrderStatusEnum;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

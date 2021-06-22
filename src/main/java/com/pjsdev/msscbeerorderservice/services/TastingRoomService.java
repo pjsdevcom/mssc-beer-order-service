@@ -17,13 +17,13 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class TestingRoomService {
+public class TastingRoomService {
 
     private final CustomerRepository customerRepository;
     private final BeerOrderService beerOrderService;
     private final List<String> beerUpcs = new ArrayList<>(3);
 
-    public TestingRoomService(CustomerRepository customerRepository, BeerOrderService beerOrderService) {
+    public TastingRoomService(CustomerRepository customerRepository, BeerOrderService beerOrderService) {
 
         this.customerRepository = customerRepository;
         this.beerOrderService = beerOrderService;
@@ -35,7 +35,7 @@ public class TestingRoomService {
 
     @Transactional
     @Scheduled(fixedRate = 2000) //run every 2 seconds
-    public void placeTastingRoomOrder(){
+    public void placeTastingRoomOrder() {
 
         List<Customer> customerList = customerRepository.findAllByCustomerNameLike(BeerOrderBootstrap.TASTING_ROOM);
 
