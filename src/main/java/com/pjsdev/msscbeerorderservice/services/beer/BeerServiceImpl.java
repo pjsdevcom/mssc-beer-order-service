@@ -1,6 +1,6 @@
 package com.pjsdev.msscbeerorderservice.services.beer;
 
-import com.pjsdev.msscbeerorderservice.web.model.BeerDto;
+import com.pjsdev.brewery.model.BeerDto;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;

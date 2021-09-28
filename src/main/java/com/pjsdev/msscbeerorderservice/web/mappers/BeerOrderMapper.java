@@ -1,7 +1,7 @@
 package com.pjsdev.msscbeerorderservice.web.mappers;
 
 import com.pjsdev.msscbeerorderservice.domain.BeerOrder;
-import com.pjsdev.msscbeerorderservice.web.model.BeerOrderDto;
+import com.pjsdev.brewery.model.BeerOrderDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
