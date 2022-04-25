@@ -7,6 +7,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.pjsdev.brewery.model.BeerDto;
 import com.pjsdev.brewery.model.BeerOrderPagedList;
 import com.pjsdev.brewery.model.BeerPagedList;
+import com.pjsdev.brewery.model.events.AllocationFailureEvent;
+import com.pjsdev.msscbeerorderservice.config.JmsConfig;
 import com.pjsdev.msscbeerorderservice.domain.BeerOrder;
 import com.pjsdev.msscbeerorderservice.domain.BeerOrderLine;
 import com.pjsdev.msscbeerorderservice.domain.BeerOrderStatusEnum;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jms.core.JmsTemplate;
 
 import java.util.*;
 
@@ -28,6 +31,7 @@ import static com.github.jenspiegsa.wiremockextension.ManagedWireMockServer.with
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,6 +54,9 @@ public class BeerOrderManagerImplIT {
 
     @Autowired
     WireMockServer wireMockServer;
+
+    @Autowired
+    JmsTemplate jmsTemplate;
 
     Customer testCustomer;
 
@@ -138,6 +145,11 @@ public class BeerOrderManagerImplIT {
 
             assertEquals(BeerOrderStatusEnum.ALLOCATION_EXCEPTION, foundOrder.getOrderStatus());
         });
+
+        AllocationFailureEvent allocationFailureEvent = (AllocationFailureEvent) jmsTemplate.receiveAndConvert(JmsConfig.ALLOCATION_FAILURE_QUEUE);
+
+        assertNotNull(allocationFailureEvent);
+        assertThat(allocationFailureEvent.getOrderId()).isEqualTo(savedBeerOrder.getId());
     }
 
     @Test
