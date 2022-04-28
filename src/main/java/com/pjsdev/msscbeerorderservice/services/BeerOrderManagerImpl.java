@@ -15,6 +15,7 @@ import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.UUID;
 
 @Service
@@ -26,6 +27,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     private final StateMachineFactory<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachineFactory;
     private final BeerOrderRepository beerOrderRepository;
     private final BeerOrderStateChangeInterceptor beerOrderStateChangeInterceptor;
+    private final EntityManager entityManager;
 
     @Transactional
     @Override
@@ -42,6 +44,9 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     @Transactional
     @Override
     public void processValidationResult(UUID beerOrderId, Boolean isValid) {
+
+        entityManager.flush();
+
         BeerOrder beerOrder = beerOrderRepository.getOne(beerOrderId);
 
         if (isValid) {
@@ -90,6 +95,12 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     public void beerOrderPickedUp(UUID id) {
         BeerOrder beerOrder = beerOrderRepository.findOneById(id);
         sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.BEER_ORDER_PICKED_UP);
+    }
+
+    @Override
+    public void cancelOrder(UUID id) {
+        BeerOrder beerOrder = beerOrderRepository.findOneById(id);
+        sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.CANCEL_ORDER);
     }
 
     private void sendBeerOrderEvent(BeerOrder beerOrder, BeerOrderEventEnum eventEnum) {
